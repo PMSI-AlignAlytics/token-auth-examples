@@ -1,0 +1,21 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Index";
+}
+
+<h2>Home/Index</h2>
+
+<script type="text/javascript">
+    function initialize() {
+        console.log('script loaded');
+    }
+
+    function loadScript() {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'http://localhost:62228/lib/main?loginUrl=/login&callback=initialize';
+        document.body.appendChild(script);
+    }
+
+    window.onload = loadScript;
+</script>
