@@ -7,6 +7,8 @@ using Microsoft.Owin;
 using Newtonsoft.Json.Serialization;
 using System.Web.Http;
 using System.Net.Http.Formatting;
+using Microsoft.Owin.Security.OAuth;
+using WebApp.Provider;
 
 [assembly: OwinStartup(typeof(WebApp.Startup))]
 namespace WebApp
@@ -15,6 +17,8 @@ namespace WebApp
     {
         public void Configuration(IAppBuilder app)
         {
+            ConfigureOAuth(app);
+
             HttpConfiguration config = new HttpConfiguration();
             config.MapHttpAttributeRoutes();
 
@@ -28,6 +32,22 @@ namespace WebApp
             jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             WebApiConfig.Register(config);
             app.UseWebApi(config);
+        }
+
+        public void ConfigureOAuth(IAppBuilder app)
+        {
+            OAuthAuthorizationServerOptions OAuthServerOptions = new OAuthAuthorizationServerOptions()
+            {
+                AllowInsecureHttp = true,
+                TokenEndpointPath = new PathString("/token"),
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
+                Provider = new SimpleAuthorizationServerProvider()
+            };
+
+            // Token Generation
+            app.UseOAuthAuthorizationServer(OAuthServerOptions);
+            app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
+
         }
 
     }
