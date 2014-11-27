@@ -9,6 +9,8 @@ using System.Web.Http;
 using System.Net.Http.Formatting;
 using Microsoft.Owin.Security.OAuth;
 using WebApp.Provider;
+using Microsoft.Owin.FileSystems;
+using Microsoft.Owin.StaticFiles;
 
 [assembly: OwinStartup(typeof(WebApp.Startup))]
 namespace WebApp
@@ -17,6 +19,13 @@ namespace WebApp
     {
         public void Configuration(IAppBuilder app)
         {
+
+            app.UseFileServer(new FileServerOptions()
+            {
+                RequestPath = PathString.Empty,
+                FileSystem = new PhysicalFileSystem(@".\client"),
+            });
+
             ConfigureOAuth(app);
 
             HttpConfiguration config = new HttpConfiguration();
@@ -30,8 +39,10 @@ namespace WebApp
 
             var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
             jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            WebApiConfig.Register(config);
             app.UseWebApi(config);
+
+            
+
         }
 
         public void ConfigureOAuth(IAppBuilder app)
