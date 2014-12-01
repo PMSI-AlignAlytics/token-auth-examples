@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IdentityModel.Tokens;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -70,9 +71,10 @@ namespace WebApp.Controllers
         public async Task<HttpResponseMessage> Token([FromBody] Body body)
         {
             HttpResponseMessage message = null;
+            IdentityUser user = null;
             using (AuthRepository _repo = new AuthRepository())
             {
-                IdentityUser user = await _repo.FindUser(body.username, body.password);
+                user = await _repo.FindUser(body.username, body.password);
 
                 if (user == null)
                 {
@@ -81,8 +83,7 @@ namespace WebApp.Controllers
                 }
             }
 
-            var token = new System.IdentityModel.Tokens.JwtSecurityToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFkbWluQHNhbGVzYWxpZ24uY29tIiwic3ViIjoiMTIzNDU2Nzg5MCIsImlzcyI6Im9tZWdhIiwiZXhwIjoxNDE3MTkxMDA4LCJuYmYiOjE0MTcxODc0MDh9.eD4sShue3-YenXCmNXlNGuRHOUuKRhvKZAPxzn2X9OM");
-            
+            var token = CreateToken("omega", "omega will make life more happier", user.Id, user.Email);  
 
             message = new HttpResponseMessage(HttpStatusCode.OK);
             JToken json = JObject.Parse("{ 'access_token': '" + token.RawData + "', 'token_type': 'bearer', 'expires_in': 86399 }");
@@ -90,6 +91,32 @@ namespace WebApp.Controllers
             
             return message;
 
+        }
+
+
+        private JwtSecurityToken CreateToken(string issuer, string symKey, string sub, string email)
+        {
+            var handler = new JwtSecurityTokenHandler();
+
+            string DefaultSymmetricKeyEncoded_256 = Convert.ToBase64String(Encoding.UTF8.GetBytes(symKey));
+            byte[] DefaultSymmetricKeyBytes_256 = Convert.FromBase64String(DefaultSymmetricKeyEncoded_256);
+            var key = new InMemorySymmetricSecurityKey(DefaultSymmetricKeyBytes_256);
+            var sc = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature, SecurityAlgorithms.Sha256Digest);
+            var prov = new SymmetricSignatureProvider(key, SecurityAlgorithms.HmacSha256Signature);
+
+            var token = new JwtSecurityToken();
+
+            var subject = new System.Security.Claims.ClaimsIdentity();
+            var emailClaim = new Claim("email", email);
+            var subClaim = new Claim("sub", sub);
+            subject.AddClaim(emailClaim);
+            subject.AddClaim(subClaim);
+            subject.AddClaim(new System.Security.Claims.Claim("iss", issuer));
+
+            var passportToken = handler.CreateToken(issuer, null, subject, DateTime.Now, DateTime.Now.AddHours(1),
+                sc, prov);
+
+            return passportToken;
         }
 
         // POST api/Account/Register

@@ -13,7 +13,11 @@ app.controller('loginController', ['$scope', '$location', 'authService', 'ngAuth
 
         authService.login($scope.loginData).then(function (response) {
 
-            $location.path('/orders');
+            if (typeof AlignAuth === "function") {
+                AlignAuth().init(response);
+            }
+
+            //$location.path('/orders');
 
         },
          function (err) {

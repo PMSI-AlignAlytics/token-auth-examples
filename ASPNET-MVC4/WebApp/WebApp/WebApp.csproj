@@ -59,16 +59,23 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Owin">
-      <HintPath>..\..\AlignAuth\packages\Microsoft.Owin.3.0.0\lib\net45\Microsoft.Owin.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Owin.3.0.0\lib\net45\Microsoft.Owin.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Owin.FileSystems">
       <HintPath>..\packages\Microsoft.Owin.FileSystems.3.0.0\lib\net45\Microsoft.Owin.FileSystems.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Owin.Host.HttpListener">
+      <HintPath>..\packages\Microsoft.Owin.Host.HttpListener.2.0.2\lib\net45\Microsoft.Owin.Host.HttpListener.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Owin.Host.SystemWeb">
       <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.2.1.0\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Owin.Hosting, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Owin.Hosting.3.0.0\lib\net45\Microsoft.Owin.Hosting.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Owin.Security">
-      <HintPath>..\..\AlignAuth\packages\Microsoft.Owin.Security.3.0.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Owin.Security.3.0.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Owin.Security.Cookies">
       <HintPath>..\packages\Microsoft.Owin.Security.Cookies.2.1.0\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
@@ -84,7 +91,7 @@
       <HintPath>..\packages\Microsoft.Owin.StaticFiles.3.0.0\lib\net45\Microsoft.Owin.StaticFiles.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\AlignAuth\packages\Newtonsoft.Json.6.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Owin">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
@@ -112,7 +119,7 @@
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.2\lib\net45\System.Web.Http.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Http.Owin">
-      <HintPath>..\..\AlignAuth\packages\Microsoft.AspNet.WebApi.Owin.5.2.2\lib\net45\System.Web.Http.Owin.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Owin.5.2.2\lib\net45\System.Web.Http.Owin.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
@@ -182,6 +189,7 @@
     <Compile Include="TokenAuthorize.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Program.cs" />
     <Content Include="client\app\app.js" />
     <Content Include="client\app\controllers\associateController.js" />
     <Content Include="client\app\controllers\homeController.js" />
@@ -215,12 +223,16 @@
     <Content Include="client\scripts\angular-local-storage.min.js" />
     <Content Include="client\scripts\authComplete.js" />
     <Content Include="client\scripts\loading-bar.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
@@ -242,6 +254,18 @@
     <Content Include="client\content\fonts\glyphicons-halflings-regular.eot" />
     <Content Include="client\content\fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="client\content\fonts\glyphicons-halflings-regular.woff" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="apps\omega.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="apps\salesalign.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Program.exe.config" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -281,7 +305,11 @@
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
   </Target> -->
+  <Target Name="AfterBuild">
+    <Exec Command="copy ..\packages\EntityFramework.6.1.0\tools\migrate.exe bin\migrate.exe" />
+	<Exec Command="bin\migrate.exe WebApp.dll /startupConfigurationFile=&quot;..\Web.config&quot; /verbose" />
+	<Exec IgnoreExitCode="true" Command="copy Program.exe.config bin\Program.exe.config" />
+    <Exec IgnoreExitCode="true" Command="csc /appconfig:Program.exe.config /lib:bin /reference:EntityFramework.dll;EntityFramework.SqlServer.dll;Microsoft.AspNet.Identity.Core.dll;Microsoft.AspNet.Identity.EntityFramework.dll;Microsoft.AspNet.Identity.Owin.dll;Microsoft.Owin.dll;Microsoft.Owin.FileSystems.dll;Microsoft.Owin.Host.HttpListener.dll;Microsoft.Owin.Host.SystemWeb.dll;Microsoft.Owin.Hosting.dll;Microsoft.Owin.Security.Cookies.dll;Microsoft.Owin.Security.dll;Microsoft.Owin.Security.Jwt.dll;Microsoft.Owin.Security.OAuth.dll;Microsoft.Owin.StaticFiles.dll;Microsoft.Web.Infrastructure.dll;Microsoft.Web.Mvc.FixedDisplayModes.dll;Newtonsoft.Json.dll;Owin.dll;System.IdentityModel.Tokens.Jwt.dll;System.Net.Http.Formatting.dll;System.Web.Helpers.dll;System.Web.Http.dll;System.Web.Http.Owin.dll;System.Web.Mvc.dll;System.Web.Razor.dll;System.Web.WebPages.Deployment.dll;System.Web.WebPages.dll;System.Web.WebPages.Razor.dll;WebApp.dll /target:exe /out:bin\Program.exe Program.cs" />
+  </Target>
 </Project>

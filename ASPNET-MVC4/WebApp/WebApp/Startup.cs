@@ -1,20 +1,15 @@
 ﻿using System;
-using System.IdentityModel.Tokens;
 using Owin;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Microsoft.Owin;
 using Newtonsoft.Json.Serialization;
 using System.Web.Http;
 using System.Net.Http.Formatting;
-using Microsoft.Owin.Security.OAuth;
 using WebApp.Provider;
 using Microsoft.Owin.FileSystems;
 using Microsoft.Owin.StaticFiles;
 using Microsoft.Owin.Security.Jwt;
-using WebApp.Handler;
-using Microsoft.AspNet.Identity;
 
 [assembly: OwinStartup(typeof(WebApp.Startup))]
 namespace WebApp
@@ -23,11 +18,12 @@ namespace WebApp
     {
         public void Configuration(IAppBuilder app)
         {
+            
 
             app.UseFileServer(new FileServerOptions()
             {
                 RequestPath = PathString.Empty,
-                FileSystem = new PhysicalFileSystem(@".\client"),
+                FileSystem = new PhysicalFileSystem(@"..\client")
             });
 
             ConfigureJwtAuth(app);

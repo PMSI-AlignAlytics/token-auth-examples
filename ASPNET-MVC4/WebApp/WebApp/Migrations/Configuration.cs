@@ -26,6 +26,7 @@ namespace WebApp.Migrations
                 {
                     Id = "599cc3b4-b8c5-4427-b074-c08201227a30",
                     UserName = "iduser",
+                    Email = "iduser@mail.com",
                     PasswordHash = "AHSCLfFeM58BT8Uf5uemYjfzoiz6nFRHeFR/cHxnTdzDLVlu833cL1XQiHH7m4p/dA==",
                     SecurityStamp = "a9010b8f-7bd6-4bf1-a1ae-90f407501fc0",
                     EmailConfirmed = false,

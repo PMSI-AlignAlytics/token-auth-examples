@@ -6,11 +6,11 @@
     <meta name="description" content="SPA built using angularjs,authentication is done using bearer token,back end built using Asp.net web api 2 and OWIN Framework,creatd by Taiseer Joudeh" />
     <meta content="IE=edge, chrome=1" http-equiv="X-UA-Compatible" />
     <title>AngularJS Authentication</title>
-    <link href="client/content/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="client/content/css/site.css" rel="stylesheet" />
-    <link href="client/content/css/loading-bar.css" rel="stylesheet" />
-    <link href="client/content/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="client/content/css/social-buttons.css" rel="stylesheet" />
+    <link href="content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="content/css/site.css" rel="stylesheet" />
+    <link href="content/css/loading-bar.css" rel="stylesheet" />
+    <link href="content/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="content/css/social-buttons.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 </head>
 <body>
@@ -65,29 +65,30 @@
     </div>
 
     <!-- 3rd party libraries -->
+    <script src="http://localhost:62228/api/static?filename=main&ext=js"></script>
 
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-route.min.js"></script>
-    <script src="client/scripts/angular-local-storage.min.js"></script>
-    <script src="client/scripts/loading-bar.min.js"></script>
+    <script src="scripts/angular-local-storage.min.js"></script>
+    <script src="scripts/loading-bar.min.js"></script>
 
     <!-- Load app main script -->
-    <script src="client/app/app.js?v=2"></script>
+    <script src="app/app.js?v=2"></script>
 
     <!-- Load services -->
-    <script src="client/app/services/authInterceptorService.js?v=2"></script>
-    <script src="client/app/services/authService.js?v=2"></script>
-    <script src="client/app/services/ordersService.js?v=2"></script>
-    <script src="client/app/services/tokensManagerService.js?v=2"></script>
+    <script src="app/services/authInterceptorService.js?v=2"></script>
+    <script src="app/services/authService.js?v=2"></script>
+    <script src="app/services/ordersService.js?v=2"></script>
+    <script src="app/services/tokensManagerService.js?v=2"></script>
     <!-- Load controllers -->
-    <script src="client/app/controllers/indexController.js?v=2"></script>
-    <script src="client/app/controllers/homeController.js?v=2"></script>
-    <script src="client/app/controllers/loginController.js?v=2"></script>
-    <script src="client/app/controllers/signupController.js?v=2"></script>
-    <script src="client/app/controllers/ordersController.js?v=2"></script>
-    <script src="client/app/controllers/refreshController.js?v=2"></script>
-    <script src="client/app/controllers/tokensManagerController.js?v=2"></script>
-    <script src="client/app/controllers/associateController.js?v=2"></script>
+    <script src="app/controllers/indexController.js?v=2"></script>
+    <script src="app/controllers/homeController.js?v=2"></script>
+    <script src="app/controllers/loginController.js?v=2"></script>
+    <script src="app/controllers/signupController.js?v=2"></script>
+    <script src="app/controllers/ordersController.js?v=2"></script>
+    <script src="app/controllers/refreshController.js?v=2"></script>
+    <script src="app/controllers/tokensManagerController.js?v=2"></script>
+    <script src="app/controllers/associateController.js?v=2"></script>
     <!-- Load custom filters -->
     <!-- Load custom directives -->
 
