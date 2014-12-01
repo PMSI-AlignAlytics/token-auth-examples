@@ -1,7 +1,27 @@
 ﻿ASPNET-MVC4
 ===
 
+##### Installation
+
+1. Get nuget deps from command line
+	<pre>
+	$ .nuget/nuget.exe restore
+	</pre>
+2. Run migrations (from package manager console in VS)
+	<pre>
+	update-database -verbose -ConnectionStringName AuthContext
+	</pre>
+
 Token based authentication with OWIN, Web API 2, MVC4
+
+There's a user setup with credentials
+<pre>
+username: iduser
+password: password
+</pre>
+
+
+##### Using the API
 
 First Register a user (this is how the db gets created, will fix soon)
 

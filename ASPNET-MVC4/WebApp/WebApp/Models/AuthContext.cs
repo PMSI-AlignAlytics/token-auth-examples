@@ -9,7 +9,7 @@ namespace WebApp.Models
     public class AuthContext : IdentityDbContext<IdentityUser>
     {
         public AuthContext()
-            : base("AuthContext")
+            : base("AuthContext", throwIfV1Schema: false)
         {
 
         }

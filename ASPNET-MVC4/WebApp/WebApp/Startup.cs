@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IdentityModel.Tokens;
 using Owin;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,9 @@ using Microsoft.Owin.Security.OAuth;
 using WebApp.Provider;
 using Microsoft.Owin.FileSystems;
 using Microsoft.Owin.StaticFiles;
+using Microsoft.Owin.Security.Jwt;
+using WebApp.Handler;
+using Microsoft.AspNet.Identity;
 
 [assembly: OwinStartup(typeof(WebApp.Startup))]
 namespace WebApp
@@ -26,7 +30,7 @@ namespace WebApp
                 FileSystem = new PhysicalFileSystem(@".\client"),
             });
 
-            ConfigureOAuth(app);
+            ConfigureJwtAuth(app);
 
             HttpConfiguration config = new HttpConfiguration();
             config.MapHttpAttributeRoutes();
@@ -45,21 +49,24 @@ namespace WebApp
 
         }
 
-        public void ConfigureOAuth(IAppBuilder app)
+        public void ConfigureJwtAuth(IAppBuilder app)
         {
-            OAuthAuthorizationServerOptions OAuthServerOptions = new OAuthAuthorizationServerOptions()
+            var options = new JwtBearerAuthenticationOptions()
             {
-                AllowInsecureHttp = true,
-                TokenEndpointPath = new PathString("/token"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
-                Provider = new SimpleAuthorizationServerProvider()
+                Provider = new BearerAuthenticationProvider(),
+                AllowedAudiences = new List<string> {
+                    "*"
+                },
+                IssuerSecurityTokenProviders = new List<SymmetricKeyIssuerSecurityTokenProvider>
+                {
+                    new SymmetricKeyIssuerSecurityTokenProvider("omega", System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes("omega will make life more happier")))
+                }
             };
 
-            // Token Generation
-            app.UseOAuthAuthorizationServer(OAuthServerOptions);
-            app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
+            app.UseJwtBearerAuthentication(options);
 
         }
+
 
     }
 }
