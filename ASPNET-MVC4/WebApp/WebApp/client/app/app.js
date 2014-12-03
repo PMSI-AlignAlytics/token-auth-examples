@@ -52,8 +52,9 @@ app.config(function ($httpProvider) {
     $httpProvider.interceptors.push('authInterceptorService');
 });
 
-app.run(['authService', function (authService) {
+app.run(['authService', 'appService', function (authService, appService) {
     authService.fillAuthData();
+    appService.get();
 }]);
 
 

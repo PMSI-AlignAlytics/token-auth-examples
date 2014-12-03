@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IdentityModel.Tokens;
 using System.Linq;
@@ -9,7 +8,6 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -23,11 +21,13 @@ namespace WebApp.Controllers
     [RoutePrefix("api/Account")]
     public class AccountController : ApiController
     {
-        private AuthRepository _repo = null;
+        private readonly AuthRepository _repo = null;
+        private readonly IAppConfig _appConfig = null;
 
-        public AccountController()
+        public AccountController(IAppConfig appConfig)
         {
             _repo = new AuthRepository();
+            _appConfig = appConfig;
         }
 
         public class Body
@@ -65,6 +65,20 @@ namespace WebApp.Controllers
             }
         }
 
+
+        [AllowAnonymous]
+        [Route("app")]
+        [HttpGet]
+        public async Task<HttpResponseMessage> App()
+        {
+            HttpResponseMessage message = null;
+
+            message = new HttpResponseMessage(HttpStatusCode.OK);
+            JToken json = JObject.Parse("{ 'name': '" + _appConfig.Name + "', 'color': '" + _appConfig.Color + "' }");
+            message.Content = new JsonContent(json);
+            return message;
+        }
+
         [AllowAnonymous]
         [Route("token")]
         [HttpPost]
@@ -83,7 +97,7 @@ namespace WebApp.Controllers
                 }
             }
 
-            var token = CreateToken("omega", "omega will make life more happier", user.Id, user.Email);  
+            var token = CreateToken(_appConfig.Name, _appConfig.Key, user.Id, user.Email);  
 
             message = new HttpResponseMessage(HttpStatusCode.OK);
             JToken json = JObject.Parse("{ 'access_token': '" + token.RawData + "', 'token_type': 'bearer', 'expires_in': 86399 }");

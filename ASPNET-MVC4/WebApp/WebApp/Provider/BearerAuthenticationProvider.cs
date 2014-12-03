@@ -16,6 +16,8 @@ namespace WebApp.Provider
     public class BearerAuthenticationProvider : IOAuthBearerAuthenticationProvider
     {
 
+        private readonly IAppConfig _appConfig;
+
         /// <summary>
 		/// Handles applying the authentication challenge to the response message.
 		/// </summary>
@@ -46,9 +48,9 @@ namespace WebApp.Provider
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:Microsoft.Owin.Security.OAuth.OAuthBearerAuthenticationProvider" /> class
 		/// </summary>
-        public BearerAuthenticationProvider()
+        public BearerAuthenticationProvider(IAppConfig appConfig)
 		{
-            
+            _appConfig = appConfig;
             this.OnRequestToken = (OAuthRequestTokenContext context) =>
             {
                 var idContext = new OAuthValidateIdentityContext(context.OwinContext, null, null);
@@ -96,8 +98,9 @@ namespace WebApp.Provider
 
                 var token = new System.IdentityModel.Tokens.JwtSecurityToken(jwt);
                
+
                 var claimIdentity = new ClaimsIdentity(token.Claims, DefaultAuthenticationTypes.ExternalBearer);
-                string DefaultSymmetricKeyEncoded_256 = Convert.ToBase64String(Encoding.UTF8.GetBytes("omega will make life more happier"));
+                string DefaultSymmetricKeyEncoded_256 = Convert.ToBase64String(Encoding.UTF8.GetBytes(_appConfig.Key));
                 byte[] DefaultSymmetricKeyBytes_256 = Convert.FromBase64String(DefaultSymmetricKeyEncoded_256);
                 var key = new InMemorySymmetricSecurityKey(DefaultSymmetricKeyBytes_256);
                 var sc = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature, SecurityAlgorithms.Sha256Digest);

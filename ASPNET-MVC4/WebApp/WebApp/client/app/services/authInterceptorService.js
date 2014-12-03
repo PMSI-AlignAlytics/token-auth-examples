@@ -5,6 +5,9 @@ app.factory('authInterceptorService', ['$q', '$injector','$location', 'localStor
 
     var _request = function (config) {
 
+        console.log('authInterceptorService._request');
+        console.log(window.localStorage);
+
         config.headers = config.headers || {};
        
         var authData = localStorageService.get('authorizationData');
@@ -16,6 +19,10 @@ app.factory('authInterceptorService', ['$q', '$injector','$location', 'localStor
     }
 
     var _responseError = function (rejection) {
+
+        console.log('authInterceptorService._responseError');
+        console.log(window.localStorage);
+
         if (rejection.status === 401) {
             var authService = $injector.get('authService');
             var authData = localStorageService.get('authorizationData');

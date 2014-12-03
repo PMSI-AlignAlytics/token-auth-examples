@@ -1,24 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Owin.Hosting;
+using Microsoft.Owin.Hosting.Services;
+using Microsoft.Owin.Hosting.Starter;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WebApp;
 
 namespace WebAppExe
 {
+
     public class Program
     {
 
         static void Main(string[] args)
         {
 
+            var currentProcess = Process.GetCurrentProcess();
+
             var port = 0;
             var appName = "";
             var key = "";
+            var color = "";
 
             if (args.Length == 0)
             {
@@ -50,22 +56,33 @@ namespace WebAppExe
                     port = token["port"].Value<int>();
                     appName = token["name"].Value<string>();
                     key = token["symKey"].Value<string>();
+                    color = token["color"].Value<string>();
                 }
             }
-
-
+            
             var options = new StartOptions("http://localhost:" + port);
-            options.Settings.Add("name", appName);
-            options.Settings.Add("key", key);
-            options.Settings.Add("devmode", "false");
+            options.AppStartup = "WebApp.Startup";
 
-            using (Microsoft.Owin.Hosting.WebApp.Start<WebApp.Startup>("http://localhost:" + port))
+            Action<Microsoft.Owin.Hosting.Services.ServiceProvider> delfun = (provider) => {
+                var appConfig = new AppConfig {
+                    Name = appName,
+                    Key = key,
+                    DisplayName = appName,
+                    Color = color
+                };
+                provider.AddInstance<IAppConfig>(appConfig);
+            };
+
+            var services = Microsoft.Owin.Hosting.Services.ServicesFactory.Create(delfun);
+            var starter = services.GetService<IHostingStarter>();
+
+            using (starter.Start(options))
             {
                 Console.WriteLine(string.Format("App [{0}] running on port [{1}]", appName, port));
+                Console.WriteLine(string.Format("ProcessId: [{0}]", currentProcess.Id));
+                Console.WriteLine("Press any key to quit");
                 Console.ReadLine();
             }
-
-            
 
         }
 

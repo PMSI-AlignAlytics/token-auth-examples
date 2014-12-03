@@ -41,6 +41,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac">
+      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Integration.Owin">
+      <HintPath>..\packages\Autofac.Owin.3.1.0\lib\net45\Autofac.Integration.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Integration.WebApi">
+      <HintPath>..\packages\Autofac.WebApi2.3.4.0\lib\net45\Autofac.Integration.WebApi.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Integration.WebApi.Owin">
+      <HintPath>..\packages\Autofac.WebApi2.Owin.3.2.0\lib\net45\Autofac.Integration.WebApi.Owin.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.dll</HintPath>
@@ -171,10 +183,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Handler\JwtTokenHandler.cs" />
+    <Compile Include="IAppConfig.cs" />
     <Compile Include="Migrations\201411271715189_Initial.cs" />
     <Compile Include="Migrations\201411271715189_Initial.Designer.cs">
       <DependentUpon>201411271715189_Initial.cs</DependentUpon>
@@ -199,6 +213,7 @@
     <Content Include="client\app\controllers\refreshController.js" />
     <Content Include="client\app\controllers\signupController.js" />
     <Content Include="client\app\controllers\tokensManagerController.js" />
+    <Content Include="client\app\services\appService.js" />
     <Content Include="client\app\services\authInterceptorService.js" />
     <Content Include="client\app\services\authService.js" />
     <Content Include="client\app\services\ordersService.js" />
@@ -308,8 +323,8 @@
   </Target> -->
   <Target Name="AfterBuild">
     <Exec Command="copy ..\packages\EntityFramework.6.1.0\tools\migrate.exe bin\migrate.exe" />
-	<Exec Command="bin\migrate.exe WebApp.dll /startupConfigurationFile=&quot;..\Web.config&quot; /verbose" />
-	<Exec IgnoreExitCode="true" Command="copy Program.exe.config bin\Program.exe.config" />
-    <Exec IgnoreExitCode="true" Command="csc /appconfig:Program.exe.config /lib:bin /reference:EntityFramework.dll;EntityFramework.SqlServer.dll;Microsoft.AspNet.Identity.Core.dll;Microsoft.AspNet.Identity.EntityFramework.dll;Microsoft.AspNet.Identity.Owin.dll;Microsoft.Owin.dll;Microsoft.Owin.FileSystems.dll;Microsoft.Owin.Host.HttpListener.dll;Microsoft.Owin.Host.SystemWeb.dll;Microsoft.Owin.Hosting.dll;Microsoft.Owin.Security.Cookies.dll;Microsoft.Owin.Security.dll;Microsoft.Owin.Security.Jwt.dll;Microsoft.Owin.Security.OAuth.dll;Microsoft.Owin.StaticFiles.dll;Microsoft.Web.Infrastructure.dll;Microsoft.Web.Mvc.FixedDisplayModes.dll;Newtonsoft.Json.dll;Owin.dll;System.IdentityModel.Tokens.Jwt.dll;System.Net.Http.Formatting.dll;System.Web.Helpers.dll;System.Web.Http.dll;System.Web.Http.Owin.dll;System.Web.Mvc.dll;System.Web.Razor.dll;System.Web.WebPages.Deployment.dll;System.Web.WebPages.dll;System.Web.WebPages.Razor.dll;WebApp.dll /target:exe /out:bin\Program.exe Program.cs" />
+    <Exec Command="bin\migrate.exe WebApp.dll /startupConfigurationFile=&quot;..\Web.config&quot; /verbose" />
+    <Exec IgnoreExitCode="true" Command="copy Program.exe.config bin\Program.exe.config" />
+    <Exec IgnoreExitCode="true" Command="csc /appconfig:Program.exe.config /lib:bin /reference:Autofac.dll;Autofac.Integration.Owin.dll;Autofac.Integration.WebApi.dll;Autofac.Integration.WebApi.Owin.dll;EntityFramework.dll;EntityFramework.SqlServer.dll;Microsoft.AspNet.Identity.Core.dll;Microsoft.AspNet.Identity.EntityFramework.dll;Microsoft.AspNet.Identity.Owin.dll;Microsoft.Owin.dll;Microsoft.Owin.FileSystems.dll;Microsoft.Owin.Host.HttpListener.dll;Microsoft.Owin.Host.SystemWeb.dll;Microsoft.Owin.Hosting.dll;Microsoft.Owin.Security.Cookies.dll;Microsoft.Owin.Security.dll;Microsoft.Owin.Security.Jwt.dll;Microsoft.Owin.Security.OAuth.dll;Microsoft.Owin.StaticFiles.dll;Microsoft.Web.Infrastructure.dll;Microsoft.Web.Mvc.FixedDisplayModes.dll;Newtonsoft.Json.dll;Owin.dll;System.IdentityModel.Tokens.Jwt.dll;System.Net.Http.Formatting.dll;System.Web.Helpers.dll;System.Web.Http.dll;System.Web.Http.Owin.dll;System.Web.Mvc.dll;System.Web.Razor.dll;System.Web.WebPages.Deployment.dll;System.Web.WebPages.dll;System.Web.WebPages.Razor.dll;WebApp.dll /target:exe /out:bin\Program.exe Program.cs" />
   </Target>
 </Project>

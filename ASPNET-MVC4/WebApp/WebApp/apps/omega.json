@@ -1,5 +1,6 @@
 ﻿{
 	"port": 5252,
 	"name": "omega",
-	"symKey": "omega will make life more happier"
+	"symKey": "omega will make life more happier",
+	"color": "#A714A7"
 }

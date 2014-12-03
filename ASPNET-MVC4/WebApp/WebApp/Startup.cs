@@ -1,4 +1,5 @@
 ﻿using System;
+using Autofac.Integration.WebApi;
 using Owin;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,20 +11,63 @@ using WebApp.Provider;
 using Microsoft.Owin.FileSystems;
 using Microsoft.Owin.StaticFiles;
 using Microsoft.Owin.Security.Jwt;
+using Autofac;
+using WebApp.Controllers;
 
 [assembly: OwinStartup(typeof(WebApp.Startup))]
 namespace WebApp
 {
     public class Startup
     {
+        private IAppConfig _appConfig;
+
+        public Startup() { }
+
+        public Startup(IAppConfig appConfig)
+        {
+            _appConfig = appConfig;
+        }
+
+        public IContainer Configure(IAppConfig config)
+        {
+            var builder = new ContainerBuilder();
+
+            builder.RegisterApiControllers(typeof(AccountController).Assembly);
+            builder.RegisterInstance(config).As<IAppConfig>();
+
+            var container = builder.Build();
+
+            return container;
+        }
+
         public void Configuration(IAppBuilder app)
         {
-            
+            var path = "";
+
+          
+            if (_appConfig == null)
+            {
+                Console.WriteLine("starting in dev mode");
+                _appConfig = new AppConfig
+                {
+                    Name = "omega",
+                    Key = "omega will make life more happier",
+                    DisplayName = "omega"
+                };
+                path = @".\client";
+            }
+            else
+            {
+                path = @"..\client";
+            }
+
+            var container = Configure(_appConfig);
+            app.UseAutofacMiddleware(container);
 
             app.UseFileServer(new FileServerOptions()
             {
                 RequestPath = PathString.Empty,
-                FileSystem = new PhysicalFileSystem(@"..\client")
+                FileSystem = new PhysicalFileSystem(path)
             });
 
             ConfigureJwtAuth(app);
@@ -39,9 +83,9 @@ namespace WebApp
 
             var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
             jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            app.UseWebApi(config);
 
-            
+            app.UseAutofacWebApi(config);
+            app.UseWebApi(config);
 
         }
 
@@ -49,13 +93,13 @@ namespace WebApp
         {
             var options = new JwtBearerAuthenticationOptions()
             {
-                Provider = new BearerAuthenticationProvider(),
+                Provider = new BearerAuthenticationProvider(_appConfig),
                 AllowedAudiences = new List<string> {
                     "*"
                 },
                 IssuerSecurityTokenProviders = new List<SymmetricKeyIssuerSecurityTokenProvider>
                 {
-                    new SymmetricKeyIssuerSecurityTokenProvider("omega", System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes("omega will make life more happier")))
+                    new SymmetricKeyIssuerSecurityTokenProvider(_appConfig.Name, System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(_appConfig.Key)))
                 }
             };
 
